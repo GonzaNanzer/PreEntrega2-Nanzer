@@ -55,34 +55,39 @@ class Pedido{
 const listadoProductos = [new Producto("tenedor",150,30), new Producto("Cuchara",180,27)]; //Almacena instancias de la clase Producto
 const listadoPedidos = []; //Almacena instancias de la clase Pedido
 
+
+//Inicio
+main();
+
 //Menu inicial:
-while(true){
-    let opcion = prompt(`Seleccionar opción:
-                            - Crear nuevo pedido: ingrese 1.
-                            - Agregar productos: ingrese 2.
-                            - Modificar producto existente: ingrese 3.
-                            - Ver estadísticas de la sesión: ingrese 4.`);
-    if(opcion == 1){
-        crearPedido();
-    }
-    else if(opcion == 2){
-        agregarProductosOfrecidos();
-    }
-    else if(opcion == 3){
-        modificarProducto();
-    }
-    else{
-        alert("Por favor ingrese un valor correcto.");
+function main(){
+    while(true){
+        let opcion = prompt(`Seleccionar opción:
+                                - Crear nuevo pedido: ingrese 1.
+                                - Agregar productos: ingrese 2.
+                                - Modificar producto existente: ingrese 3.
+                                - Ver estadísticas de la sesión: ingrese 4.`);
+        if(opcion == 1){
+            crearPedido();
+        }
+        else if(opcion == 2){
+            agregarProductosOfrecidos();
+        }
+        else if(opcion == 3){
+            modificarProducto();
+        }
+        else{
+            alert("Por favor ingrese un valor correcto.");
+        }
     }
 }
-
 //Funcion para crear un nuevo pedido.
 function crearPedido(){
     let nombreCliente = prompt("Ingrese el nombre del cliente");
-    let ofrecemos = "Contamos con: \n";
     nuevoPedido = new Pedido(nombreCliente);
     let pedidoEnCurso = true;
     while(pedidoEnCurso){
+        let ofrecemos = "Contamos con: \n";
         listadoProductos.forEach((elem) => ofrecemos = ofrecemos + elem.nombre + "\n");
         let nombreProducto = prompt(`Tipee el producto a agregar o presione cancelar para terminar. ${ofrecemos}`);
         if(nombreProducto !== null){
@@ -114,11 +119,18 @@ function crearPedido(){
 function agregarProductosOfrecidos(){
     let seguirCargando = true;
     while(seguirCargando){
+        let confirma;
         nombre = prompt("Nombre del nuevo producto:").toUpperCase();
-        precio = parseFloat(prompt(`Precio para ${nombre}`));
-        stock = parseInt(prompt(`Stock de ${nombre}`));
-        let confirma = prompt(`Se agregarán ${stock} unidades de ${nombre} al inventario, con un precio unitario de ${precio}. Desea confirmar?`)
-        if(confirma !== null){2
+        if(listadoProductos.some((elem)=>elem.nombre == nombre)){
+            alert("El producto ya existe. Modifique los datos en la opción 3.");
+            main();
+        }
+        else{
+            precio = parseFloat(prompt(`Precio para ${nombre}`));
+            stock = parseInt(prompt(`Stock de ${nombre}`));
+            confirma = prompt(`Se agregarán ${stock} unidades de ${nombre} al inventario, con un precio unitario de ${precio}. Desea confirmar?`);
+        }
+        if(confirma !== null){
             listadoProductos.push(new Producto(nombre,precio,stock));
         }
         else{
@@ -133,12 +145,22 @@ function agregarProductosOfrecidos(){
 
 //Funcion para modificar un producto:
 function modificarProducto(){
-    let ofrecemos = "Contamos con: \n"
-    listadoProductos.forEach((elem) => ofrecemos = ofrecemos + elem.nombre + "\n");
-    let nombreProducto = prompt(`Tipee el producto para modificar. ${ofrecemos}`).toUpperCase();
+    let items = "Contamos con: \n"
+    listadoProductos.forEach((elem) => items = items + elem.nombre + "\n");
+    let nombreProducto = prompt(`Tipee el producto para modificar. ${items}`).toUpperCase();
     if(listadoProductos.some((elem)=>elem.nombre === nombreProducto)){
-        listadoProductos.find((elem) => elem.nombre === nombreProducto).modificarPecio(prompt(`Ingrese el nuevo precio para ${nombreProducto}`));
-        listadoProductos.find((elem) => elem.nombre === nombreProducto).modificarStockManual(prompt(`Ingrese el nuevo stock para ${nombreProducto}`));
+        let nuevoPrecio = 0;
+        do{
+            nuevoPrecio = prompt(`Ingrese el nuevo precio para ${nombreProducto}`);
+            listadoProductos.find((elem) => elem.nombre === nombreProducto).modificarPecio(nuevoPrecio);
+        } while (isNaN(nuevoPrecio));
+        let nuevoStock = 0;
+        do{
+            nuevoStock = prompt(`Ingrese el nuevo stock para ${nombreProducto}`);
+            listadoProductos.find((elem) => elem.nombre === nombreProducto).modificarStockManual(nuevoStock);
+        } while (isNaN(nuevoStock));
+        listadoProductos.find((elem) => elem.nombre === nombreProducto).modificarStockManual(nuevoStock);
+        alert(`Se modificaron correctamente los valores para ${nombreProducto}`);
     }
     else{
         alert("Producto no encontrado.");
