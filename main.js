@@ -34,27 +34,31 @@ class Pedido{
         this.productosPedidos.push({nombreProducto, cantidad});
     }
 
-
     mostrarResumen(nuevoPedido){
         let fecha = new Date();
         let resumen = ` Item        Cantidad        Total`;
-        let total = 0;
         for(let item of nuevoPedido.productosPedidos){
             resumen = resumen + `
             ${item.nombreProducto}          ${item.cantidad}        ${listadoProductos.find((elem) => elem.nombre === item.nombreProducto).precio * item.cantidad}`
-            total = total + listadoProductos.find((elem) => elem.nombre === item.nombreProducto).precio * item.cantidad;
         }
         alert(`Pedido de ${nuevoPedido.nombreCliente} creado el ${fecha.getDay()} del ${fecha.getMonth()} del ${fecha.getFullYear()}
                 ${resumen} 
-            El total del pedido es ${total}`);
+            El total del pedido es ${this.calcularTotal(nuevoPedido)}`);
+    }
+
+    calcularTotal(nuevoPedido){
+        let total = 0;
+        for(let item of nuevoPedido.productosPedidos){
+            total = total + listadoProductos.find((elem) => elem.nombre === item.nombreProducto).precio * item.cantidad;
+        }
+        return total;
     }
 
 }
 
 // Variables: 
-const listadoProductos = [new Producto("tenedor",150,30), new Producto("Cuchara",180,27)]; //Almacena instancias de la clase Producto
-const listadoPedidos = []; //Almacena instancias de la clase Pedido
-
+const listadoProductos = [new Producto("tenedor",150,30), new Producto("Cuchara",180,27)]; //Almacena instancias de la clase Producto. Inicia con tenedor y cuchara.
+const listadoPedidos = []; //Almacena instancias de la clase Pedido, para usarse en la generación de estadísticas.
 
 //Inicio
 main();
@@ -76,11 +80,15 @@ function main(){
         else if(opcion == 3){
             modificarProducto();
         }
+        else if(opcion == 4){
+            mostrarEstadisticas();
+        }
         else{
             alert("Por favor ingrese un valor correcto.");
         }
     }
 }
+
 //Funcion para crear un nuevo pedido.
 function crearPedido(){
     let nombreCliente = prompt("Ingrese el nombre del cliente");
@@ -126,8 +134,8 @@ function agregarProductosOfrecidos(){
             main();
         }
         else{
-            precio = parseFloat(prompt(`Precio para ${nombre}`));
-            stock = parseInt(prompt(`Stock de ${nombre}`));
+            do{precio = parseFloat(prompt(`Precio para ${nombre}`));}while(isNaN(precio) || precio <= 0);
+            do{stock = parseInt(prompt(`Stock de ${nombre}`));}while(isNaN(stock)|| stock <= 0);
             confirma = prompt(`Se agregarán ${stock} unidades de ${nombre} al inventario, con un precio unitario de ${precio}. Desea confirmar?`);
         }
         if(confirma !== null){
@@ -151,12 +159,20 @@ function modificarProducto(){
     if(listadoProductos.some((elem)=>elem.nombre === nombreProducto)){
         let nuevoPrecio = 0;
         do{
-            nuevoPrecio = prompt(`Ingrese el nuevo precio para ${nombreProducto}`);
+            nuevoPrecio = prompt(`Ingrese el nuevo precio para ${nombreProducto}, o cancelar para no modificar. El precio actual es ${listadoProductos.find((elem) => elem.nombre === nombreProducto).precio}`);
+            if(nuevoPrecio === null){
+                alert("No se modificó el precio.");
+                break;
+            }
             listadoProductos.find((elem) => elem.nombre === nombreProducto).modificarPecio(nuevoPrecio);
         } while (isNaN(nuevoPrecio));
         let nuevoStock = 0;
         do{
-            nuevoStock = prompt(`Ingrese el nuevo stock para ${nombreProducto}`);
+            nuevoStock = prompt(`Ingrese el nuevo stock para ${nombreProducto}, o cancelar para no modificar. El stock actual es ${listadoProductos.find((elem)=>elem.nombre === nombreProducto).stock}`);
+            if(nuevoStock === null){
+                alert(`No se modificó el stock.`);
+                main();
+            }
             listadoProductos.find((elem) => elem.nombre === nombreProducto).modificarStockManual(nuevoStock);
         } while (isNaN(nuevoStock));
         listadoProductos.find((elem) => elem.nombre === nombreProducto).modificarStockManual(nuevoStock);
@@ -167,3 +183,49 @@ function modificarProducto(){
     }
 }
 
+//Funciones para ver estadísticas del día sobre: Resumen de pedidos del día; Recaudación total; Productos con bajo stock.
+function mostrarEstadisticas(){
+    alert(resumenPedidosDia());
+    alert(recaudacionTotalDia());
+    alert(stocksLimite());
+}
+
+function resumenPedidosDia(){
+//Eliminar pedidos vacíos
+    listadoPedidos.sort((a,b) => a.productosPedidos.length - b.productosPedidos.length); 
+    while (listadoPedidos.length > 0 && listadoPedidos[0].productosPedidos.length === 0) {
+        listadoPedidos.shift();
+    }
+//Armar el mensaje de resumen
+    let mensaje = `Pedidos del día: `;
+    let i = 1;
+    for(const pedido of listadoPedidos){
+        let sumaProductos = 0;
+        pedido.productosPedidos.forEach((elem) => sumaProductos = sumaProductos + parseInt(elem.cantidad));
+        mensaje = mensaje + `
+        - Pedido ${i}, de ${pedido.nombreCliente}: ${sumaProductos} productos por $ ${pedido.calcularTotal(pedido)}.-`
+        i++;
+    }
+    return mensaje;
+}
+
+function recaudacionTotalDia(){
+    let recaudacion = 0;
+    for(const pedido of listadoPedidos){
+        recaudacion = recaudacion + parseFloat(pedido.calcularTotal(pedido));
+    }
+    let mensaje = `La recaudación del día fue de $${recaudacion}.-`;
+    return mensaje;
+}
+
+function stocksLimite(){
+    let itemsParaReponer = [];
+    for(const producto of listadoProductos){
+        if(producto.stock < 5){
+            itemsParaReponer.push(producto.nombre);
+        }
+    }
+    let listaItemsParaReponer = itemsParaReponer.join(", ");
+    let mensaje = "Es necesario reponer: " + listaItemsParaReponer;
+    return mensaje;
+}

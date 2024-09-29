@@ -8,27 +8,34 @@
 <body>
     <h1>Pre entrega 2 -  Nanzer</h1>
     <h2>Descripción del proyecto</h2>
-    <p>Este simulador es una herramienta que permite gestionar las ventas diarias de un pequeño negocio. <br>
-        La idea de la herramienta en este punto es que permita iniciar el dia de trabajo registrando el stock de cada <br>
-        tipo de producto de la tienda, agregar o quitar un producto nuevo si fuera necesario, y registrar los pedidos de <br>
-        día para luego tener estadísticas al final de la jornada. <br>
-        Las funciones serían: 
+    <p>El proyecto consiste en un sistema de gestion de pedidos. Permite crear pedidos, agregar productos a los ofrecidos por la tienda, modificar datos
+        de los productos que la tienda ofrece como precio y stock, y ver estadísticas de la tienda en la sesión activa.</p>
 
+    <h3>Funciones:</h3>
         <ol>
             <li>Crear un nuevo pedido.</li>
-            <li>Agregar / Quitar productos.</li>
+            <li>Agregar productos.</li>
             <li>Modificar datos de un producto.</li>
-            <!-- <li>Ingresar un descuento a realizar al total del pedido.</li> !-->
-            <li>Mostrar estadísticas de la jornada.</li>
+            <li>Mostrar estadísticas:<ul>
+                <li>Pedidos del día.</li>
+                <li>Recaudación total.</li>
+                <li>Productos que deben reponerse por tener stock menor a 5 unidades.</li>
+            </ul></li>
         </ol> 
     </p>
 
-    <p>Al ingresar se muestra un menu donde se elije si se desea crear un pedido, ver los precios o modificar los precios.
+    <h3>Detalles del funcionamiento:</h3>
+    <p>Al ingresar se muestra un menu con las opciones: Crear pedido, Agregar producto, Modificar producto o Ver estadísticas. Si se ingresa un valor erroneo o se presiona cancelar, 
+        se muestra un mensaje de alerta y se regresa al menu.
         <ul>
-            <li>Si se desea armar un nuevo pedido, el sistema pide ingresar la cantidad de cada producto. Ingresadas las 5 cantidades, se pregunta el descuento a realizar en porcentaje. 
-                Al finalizar, el sistema muestra el precio total del pedido y al dar a aceptar se vuelve al menu inicial.</li>
-            <li>Si se desea ver los precios, el sistema muestra el listado de precios actuales. Al aceptar se regresa al menu principal.</li>
-            <li>Si se desea modificar el precio de los productos, el sistema pide ingresar el valor de cada uno de los productos. Al finalizar se vuelve al menu inicial.</li>
+            <li>Si se desea armar un nuevo pedido: Se pide un nombre de cliente, y luego se muestran los productos disponibles y se solicita escribir los que se desean agregar al pedido.
+                El nombre puede ser cualquier dato. El sistema corrobora que se ingrese correctamente el nombre del producto. Una vez seleccionado el producto, el sistema muestra el stock
+                de  ese producto y solicita la cantidad a agregar, controlando la validez del dato. Aceptar sigue cargando productos, y al cancelar se muestra el resumen del pedido.</li>
+            <li>Si se selecciona agregar productos, se solicita nombre (puede ser cualquier dato). Si el producto ya existe, se alerta y se regresa al menu inicial. Luego
+                se pide precio y stock (estos sí se validan). Al aceptar se puede cargar más productos, al cancelar se vuelve al menu.</li>
+            <li>Si se selecciona modificar producto, el sistema muestra los disponibles y pide el nombre del producto a modificar. Si el dato es erroneo, se alerta y se regresa al menu
+                inicial. Si es correcto, se piden y validan los valores de precio y stock. Si se cancela, no se modifican los datos.</li>
+            <li>Si se selecciona ver estadísticas, se muestran con alert sucesivamente: Pedidos del día que no estén vacíos, Recaudación total y nombres de productos con stock menor a 5 unidaes.</li>
         </ul>
     </p>
 
