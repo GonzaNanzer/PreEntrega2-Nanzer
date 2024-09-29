@@ -63,7 +63,7 @@ const listadoPedidos = []; //Almacena instancias de la clase Pedido, para usarse
 //Inicio
 main();
 
-//Menu inicial:
+//Menu inicial: Debe estar siempre abierto, ya que la interfaz es un prompt. No use recursividad porque entiendo que usa mas recursos que un bucle infinito.
 function main(){
     while(true){
         let opcion = prompt(`Seleccionar opción:
@@ -92,7 +92,7 @@ function main(){
 //Funcion para crear un nuevo pedido.
 function crearPedido(){
     let nombreCliente = prompt("Ingrese el nombre del cliente");
-    nuevoPedido = new Pedido(nombreCliente);
+    let nuevoPedido = new Pedido(nombreCliente);
     let pedidoEnCurso = true;
     while(pedidoEnCurso){
         let ofrecemos = "Contamos con: \n";
@@ -128,7 +128,7 @@ function agregarProductosOfrecidos(){
     let seguirCargando = true;
     while(seguirCargando){
         let confirma;
-        nombre = prompt("Nombre del nuevo producto:").toUpperCase();
+        let nombre = prompt("Nombre del nuevo producto:").toUpperCase();
         if(listadoProductos.some((elem)=>elem.nombre == nombre)){
             alert("El producto ya existe. Modifique los datos en la opción 3.");
             main();
