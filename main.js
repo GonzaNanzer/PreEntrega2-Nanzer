@@ -226,6 +226,9 @@ function stocksLimite(){
         }
     }
     let listaItemsParaReponer = itemsParaReponer.join(", ");
-    let mensaje = "Es necesario reponer: " + listaItemsParaReponer;
-    return mensaje;
+    if(itemsParaReponer.length != 0){
+        let mensaje = "Es necesario reponer: " + listaItemsParaReponer;
+        return mensaje;
+    }
+    else{return "No es necesario reponer productos."}
 }
